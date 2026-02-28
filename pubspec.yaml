@@ -1,0 +1,46 @@
+name: lexiaid
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  fl_chart: 1.1.1
+  flutter_animate: ^4.0.0
+  google_fonts: ^5.0.0
+  percent_indicator: ^4.2.2
+  url_launcher: ^6.2.6
+  confetti: ^0.7.0
+  shared_preferences: ^2.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  # المسار الصحيح للأصول
+  assets:
+    - assets/images/avatar.png
+    - assets/images/avatar2.png
+    - assets/images/avatar3.png
+    - assets/images/avatar4.png
+    - assets/images/avatar5.png
+    - assets/images/avatar6.png
+    - assets/images/avatar7.png
+    - assets/images/avatar8.png
+    - assets/images/avatar9.png
+    - assets/images/avatar10.png
+    - assets/images/avatar11.png
+    - assets/images/avatar12.png
+    - assets/images/avatar13.png
+    - assets/easy.json
+    - assets/medium.json
+    - assets/hard.json
