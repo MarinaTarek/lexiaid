@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'home_screen.dart'; // تأكدي المسار صح
+import 'home_screen.dart';
 
 class WritingScreen extends StatefulWidget {
   final String userName;
@@ -184,10 +184,9 @@ class _WritingScreenState extends State<WritingScreen>
               children: [
                 const SizedBox(height: 40),
 
-                // Header مع السهم في اليسار والنص في الوسط
                 Row(
                   children: [
-                    // السهم للعودة
+
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
@@ -204,10 +203,7 @@ class _WritingScreenState extends State<WritingScreen>
                       ),
                     ),
 
-                    // Spacer لإبعاد النص عن السهم
                     const SizedBox(width: 12),
-
-                    // النص في المنتصف
                     Expanded(
                       child: Center(
                         child: Text(
@@ -221,14 +217,12 @@ class _WritingScreenState extends State<WritingScreen>
                       ),
                     ),
 
-                    // Spacer صغير على اليمين للتوازن
                     const SizedBox(width: 48),
                   ],
                 ),
 
                 const SizedBox(height: 20),
 
-                // باقي الصفحة: AI feedback + Writing box + Stats كما كانت
                 if (showAI)
                   Container(
                     padding: const EdgeInsets.all(16),

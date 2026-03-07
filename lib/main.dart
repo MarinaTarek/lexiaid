@@ -5,7 +5,7 @@ import 'screens/home_screen.dart';
 import 'screens/quiz_pro_screen.dart';
 import 'screens/about_screen.dart';
 import 'screens/writing_screen.dart';
-import 'screens/reading_screen.dart'; // <- هنا الاسم الجديد
+import 'screens/reading_screen.dart';
 import 'screens/progress_tracking_screen.dart';
 import 'screens/focus_screen.dart';
 import 'screens/SelectQuestionCountScreen.dart';
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/welcome': (context) => const WelcomeScreen(),
         '/writingWriting': (context) => const WritingScreen(),
-        '/writing': (context) => const ReadingScreen(), // <- هنا
+        '/writing': (context) => const ReadingScreen(),
         '/progress': (context) => const ProgressTrackingScreen(),
         '/focus': (context) => const FocusScreen(),
         '/about': (context) => const AboutScreen(),

@@ -92,7 +92,7 @@ class _FocusScreenState extends State<FocusScreen> {
     double progress = (25 * 60 - timeLeft) / (25 * 60);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFE3F2FD), // خلفية لبني فاتح
+      backgroundColor: const Color(0xFFE3F2FD),
       body: SafeArea(
         child: Stack(
           children: [

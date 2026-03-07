@@ -46,8 +46,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFFE3F2FD), // أزرق فاتح
-              Color(0xFFBBDEFB), // أزرق أفتح شوي
+              Color(0xFFE3F2FD),
+              Color(0xFFBBDEFB),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -55,7 +55,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         ),
         child: Stack(
           children: [
-            // النجوم المتحركة
             ...List.generate(20, (index) {
               final random = Random();
               return Positioned(
@@ -65,7 +64,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   opacity: _animationController,
                   child: const Icon(
                     Icons.auto_awesome,
-                    color: Color(0xFF2196F3), // أزرق متناسق مع الزرار
+                    color: Color(0xFF2196F3),
                     size: 18,
                   ),
                 ),
@@ -111,7 +110,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       height: 60,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2196F3), // أزرق متناسق
+                          backgroundColor: const Color(0xFF2196F3),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
@@ -149,9 +148,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   }
 }
 
-// ========================
-// 3D Carousel
-// ========================
+
 class Carousel3D extends StatefulWidget {
   const Carousel3D({super.key});
 

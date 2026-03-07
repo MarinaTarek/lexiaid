@@ -28,7 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             children: [
 
-              // Back button
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Row(
@@ -76,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: const Icon(
                           Icons.auto_stories,
                           size: 50,
-                          color: Color(0xFF2196F3), // أزرق مطابق للـ Profile
+                          color: Color(0xFF2196F3),
                         ),
                       ),
 
@@ -126,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 60,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2196F3), // أزرق متناسق
+                            backgroundColor: const Color(0xFF2196F3),
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -164,7 +163,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 20),
 
-                      // Google signin
                       SizedBox(
                         width: double.infinity,
                         height: 60,
@@ -219,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Container(
                 height: 6,
                 width: double.infinity,
-                color: const Color(0xFF2196F3), // أزرق متناسق
+                color: const Color(0xFF2196F3),
               )
             ],
           ),

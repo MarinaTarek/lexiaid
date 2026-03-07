@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'quiz_pro_screen.dart';
-import 'home_screen.dart'; // لو محتاج للرجوع مباشرة للهوم
+import 'home_screen.dart';
 
 class SelectQuestionCountScreen extends StatefulWidget {
   const SelectQuestionCountScreen({super.key});
@@ -23,7 +23,7 @@ class _SelectQuestionCountScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE0F2FE), // لون خلفية يشبه Result
+      backgroundColor: const Color(0xFFE0F2FE),
       body: SafeArea(
         child: Stack(
           children: [
@@ -157,7 +157,6 @@ class _SelectQuestionCountScreenState
               ),
             ),
 
-            // ===== سهم الرجوع للهوم =====
             Positioned(
               top: 10,
               left: 10,
@@ -165,7 +164,7 @@ class _SelectQuestionCountScreenState
                 icon: const Icon(Icons.arrow_back_ios,
                     color: Colors.blueAccent, size: 28),
                 onPressed: () {
-                  Navigator.pop(context); // ترجع للشاشة السابقة (الهوم)
+                  Navigator.pop(context);
                 },
               ),
             ),

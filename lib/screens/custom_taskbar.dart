@@ -10,7 +10,7 @@ class CustomTaskBar extends StatelessWidget {
     required this.onTap,
   });
 
-  // لون كل أيقونة - ألوان أغمق
+
   Color getColor(int index, bool isActive) {
     switch (index) {
       case 0: // HOME

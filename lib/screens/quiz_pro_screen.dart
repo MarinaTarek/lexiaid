@@ -65,7 +65,7 @@ class _QuizProScreenState extends State<QuizProScreen>
               ? List<String>.from(q['options'])
               : (List<String>.from(q['incorrect_answers'])
             ..add(q['correct_answer']))
-              .toSet() // إزالة أي تكرار
+              .toSet()
               .toList();
 
           options.shuffle();

@@ -93,7 +93,6 @@ class _ProfileScreenState extends State<ProfileScreen>
           child: Column(
             children: [
 
-              /// Avatar + Progress
               AnimatedBuilder(
                 animation: _animation,
                 builder: (context, child) {
@@ -152,13 +151,10 @@ class _ProfileScreenState extends State<ProfileScreen>
               ),
 
               const SizedBox(height: 18),
-
-              /// Progress Tracker
               _progressCard(),
 
               const SizedBox(height: 18),
 
-              /// Stats
               Column(
                 children: [
 
@@ -212,12 +208,9 @@ class _ProfileScreenState extends State<ProfileScreen>
 
               const SizedBox(height: 18),
 
-              /// Social Icons (مرة واحدة فقط)
               _buildSocialLinks(),
 
               const SizedBox(height: 18),
-
-              /// Buttons
               Row(
                 children: [
 
@@ -256,7 +249,6 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  /// Progress Card
   Widget _progressCard(){
 
     return FutureBuilder(

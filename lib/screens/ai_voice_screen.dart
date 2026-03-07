@@ -21,8 +21,6 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
   String userSpeech = "";
   String correction = "";
   String explanation = "";
-
-  // ================= START RECORD =================
   Future<void> startRecording() async {
 
     final hasPermission = await _recorder.hasPermission();
@@ -56,7 +54,7 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
     });
   }
 
-  // ================= STOP RECORD =================
+
   Future<void> stopRecording() async {
 
     final path = await _recorder.stop();
@@ -70,7 +68,6 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
     }
   }
 
-  // ================= SEND AUDIO =================
   Future<void> sendToBackend(File audioFile) async {
 
     try {
@@ -108,7 +105,7 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
     }
   }
 
-  // ================= UI =================
+
   @override
   Widget build(BuildContext context) {
 
@@ -150,8 +147,6 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
             ),
 
             const SizedBox(height: 35),
-
-            // ================= MIC BUTTON =================
             GestureDetector(
 
               onTap: () {
@@ -208,8 +203,6 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
             ),
 
             const SizedBox(height: 30),
-
-            // ================= RESULTS =================
             Expanded(
               child: SingleChildScrollView(
 
@@ -250,7 +243,6 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
     );
   }
 
-  // ================= CARD WIDGET =================
   Widget _buildCard({
     required String title,
     required IconData icon,

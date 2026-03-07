@@ -7,9 +7,7 @@ class StreakService {
   static const _tasksKey = "tasks_done";
   static const _activeDaysKey = "active_days";
 
-  /// ============================
-  /// Points (XP)
-  /// ============================
+
   static Future<int> getPoints() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(_pointsKey) ?? 0;
@@ -23,9 +21,7 @@ class StreakService {
     await _updateActiveDay();
   }
 
-  /// ============================
-  /// Streak
-  /// ============================
+
   static Future<int> getStreak() async {
     final prefs = await SharedPreferences.getInstance();
     int streak = prefs.getInt(_streakKey) ?? 0;
@@ -67,9 +63,7 @@ class StreakService {
     return d1.year == d2.year && d1.month == d2.month && d1.day == d2.day;
   }
 
-  /// ============================
-  /// Tasks Done
-  /// ============================
+
   static Future<int> getTasksCompleted() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(_tasksKey) ?? 0;
@@ -83,9 +77,7 @@ class StreakService {
     await _updateActiveDay();
   }
 
-  /// ============================
-  /// Active Days
-  /// ============================
+
   static Future<int> getActiveDays() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(_activeDaysKey) ?? 0;

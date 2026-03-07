@@ -4,8 +4,6 @@ import 'home_screen.dart';
 
 class ReadingScreen extends StatefulWidget {
   final String userName;
-
-  // هنا خليت userName اختياري وفي حالة عدم وجوده هيكون "Friend"
   const ReadingScreen({super.key, this.userName = "Friend"});
 
   @override
@@ -166,7 +164,6 @@ class _ReadingScreenState extends State<ReadingScreen> {
 
               const SizedBox(height: 50),
 
-              /// Text Box
               Container(
                 padding: const EdgeInsets.all(50),
                 decoration: BoxDecoration(

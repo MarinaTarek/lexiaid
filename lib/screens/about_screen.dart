@@ -128,13 +128,12 @@ class AboutScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Row للسهم + العنوان
                 Row(
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
                       onPressed: () {
-                        Navigator.pop(context); // ترجع للشاشة السابقة
+                        Navigator.pop(context);
                       },
                     ),
                     const SizedBox(width: 4),

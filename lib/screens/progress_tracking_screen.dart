@@ -23,7 +23,6 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
     AnimationController(vsync: this, duration: const Duration(seconds: 3))
       ..repeat(reverse: true);
 
-    // Generate random positions for sparkles
     sparklesPositions = List.generate(
       sparklesCount,
           (_) => Offset(random.nextDouble(), random.nextDouble()),
@@ -53,7 +52,6 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
     return Scaffold(
       body: Stack(
         children: [
-          // Floating sparkles
           ...List.generate(sparklesCount, (i) {
             return AnimatedBuilder(
               animation: _animationController,
@@ -68,7 +66,7 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                       '✨',
                       style: TextStyle(
                         fontSize: 20,
-                        color: const Color(0xFF2196F3), // أزرق متناسق
+                        color: const Color(0xFF2196F3),
                       ),
                     ),
                   ),
@@ -112,7 +110,6 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                     ),
                     const SizedBox(height: 24),
 
-                    // Hero Stats / Level
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
@@ -178,8 +175,6 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                       ),
                     ),
                     const SizedBox(height: 24),
-
-                    // Quick Stats
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: const [
@@ -202,7 +197,6 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                     ),
                     const SizedBox(height: 24),
 
-                    // Weekly Performance Chart
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(

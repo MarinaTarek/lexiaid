@@ -17,10 +17,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   bool aiTyping = false;
 
-  // API KEY من OpenRouter
+
   final String apiKey = "API_KEY";
 
-  // سؤال AI
+
   Future<String> askAI(String text) async {
 
     try{
@@ -60,8 +60,6 @@ class _ChatScreenState extends State<ChatScreen> {
     }
 
   }
-
-  // ردود تشجيعية
   String randomEncouragement(){
 
     List<String> msgs = [
@@ -79,8 +77,6 @@ class _ChatScreenState extends State<ChatScreen> {
     return msgs.first;
 
   }
-
-  // الرد النهائي
   Future<String> respondToText(String text) async {
 
     String aiReply = await askAI(text);
@@ -88,8 +84,6 @@ class _ChatScreenState extends State<ChatScreen> {
     return "$aiReply\n\n${randomEncouragement()}";
 
   }
-
-  // ارسال الرسالة
   void sendMessage() async {
 
     if(controller.text.isEmpty) return;
