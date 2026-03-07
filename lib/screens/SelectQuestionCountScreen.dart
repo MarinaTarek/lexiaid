@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'quiz_pro_screen.dart';
+import 'home_screen.dart'; // لو محتاج للرجوع مباشرة للهوم
 
 class SelectQuestionCountScreen extends StatefulWidget {
   const SelectQuestionCountScreen({super.key});
@@ -13,70 +14,85 @@ class _SelectQuestionCountScreenState
     extends State<SelectQuestionCountScreen> {
   double _questionCount = 10;
 
-  // اللون حسب قيمة Slider
   Color getSliderColor() {
-    if (_questionCount <= 15) return Colors.green;
-    if (_questionCount <= 30) return Colors.orange;
-    return Colors.red;
+    if (_questionCount <= 15) return Colors.lightBlue.shade400;
+    if (_questionCount <= 30) return Colors.blue.shade400;
+    return Colors.blue.shade700;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFF5F2C82),
-              Color(0xFF49A09D),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Card(
-                color: Colors.white.withOpacity(0.95),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                elevation: 8,
-                child: Padding(
-                  padding:
-                  const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+      backgroundColor: const Color(0xFFE0F2FE), // لون خلفية يشبه Result
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 25, vertical: 35),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      )
+                    ],
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      const SizedBox(height: 20),
+
+                      const Icon(
+                        Icons.quiz,
+                        size: 70,
+                        color: Colors.blueAccent,
+                      ),
+
+                      const SizedBox(height: 15),
+
                       const Text(
                         "Select number of questions",
                         style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        _questionCount.toInt().toString(),
-                        style: TextStyle(
-                          fontSize: 36,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: getSliderColor(),
+                          color: Colors.black87,
                         ),
                       ),
-                      const SizedBox(height: 20),
+
+                      const SizedBox(height: 30),
+
+                      Container(
+                        padding: const EdgeInsets.all(25),
+                        decoration: BoxDecoration(
+                          color: getSliderColor().withOpacity(.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          _questionCount.toInt().toString(),
+                          style: TextStyle(
+                            fontSize: 50,
+                            fontWeight: FontWeight.bold,
+                            color: getSliderColor(),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 35),
+
                       SliderTheme(
                         data: SliderTheme.of(context).copyWith(
+                          trackHeight: 8,
                           activeTrackColor: getSliderColor(),
                           inactiveTrackColor: Colors.grey.shade300,
                           thumbColor: getSliderColor(),
-                          overlayColor: getSliderColor().withOpacity(0.2),
-                          valueIndicatorColor: getSliderColor(),
-                          valueIndicatorTextStyle:
-                          const TextStyle(color: Colors.white),
+                          overlayColor: getSliderColor().withOpacity(.2),
                         ),
                         child: Slider(
                           value: _questionCount,
@@ -91,32 +107,48 @@ class _SelectQuestionCountScreenState
                           },
                         ),
                       ),
-                      const SizedBox(height: 30),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 16, horizontal: 40),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+
+                      const SizedBox(height: 40),
+
+                      Container(
+                        width: double.infinity,
+                        height: 55,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFF42A5F5),
+                              Color(0xFF1E88E5),
+                            ],
                           ),
-                          elevation: 6,
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => QuizProScreen(
-                                  initialQuestionCount:
-                                  _questionCount.toInt()),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
                             ),
-                          );
-                        },
-                        child: const Text(
-                          "Start Quiz",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => QuizProScreen(
+                                  initialQuestionCount:
+                                  _questionCount.toInt(),
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            "Start Quiz",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -124,7 +156,20 @@ class _SelectQuestionCountScreenState
                 ),
               ),
             ),
-          ),
+
+            // ===== سهم الرجوع للهوم =====
+            Positioned(
+              top: 10,
+              left: 10,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back_ios,
+                    color: Colors.blueAccent, size: 28),
+                onPressed: () {
+                  Navigator.pop(context); // ترجع للشاشة السابقة (الهوم)
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

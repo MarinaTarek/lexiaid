@@ -4,7 +4,6 @@ import 'package:url_launcher/url_launcher.dart';
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
-  // دالة لفتح الروابط
   void _launchURL(String url) async {
     Uri uri = Uri.parse(url);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
@@ -12,7 +11,6 @@ class AboutScreen extends StatelessWidget {
     }
   }
 
-  // Widget للقسم الواحد (Title + Text)
   Widget sectionBlock(String title, Widget content, {Color? color}) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -26,7 +24,9 @@ class AboutScreen extends StatelessWidget {
         children: [
           Text(title,
               style: TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.bold, color: color ?? Colors.deepPurple)),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: color ?? const Color(0xFF1E88E5))),
           const SizedBox(height: 8),
           content,
         ],
@@ -34,7 +34,6 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  // Widget للقائمة مع الروابط
   Widget linkList(List<Map<String, String>> items) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,12 +46,14 @@ class AboutScreen extends StatelessWidget {
               TextSpan(
                 text: item['name'],
                 style: const TextStyle(
-                    color: Colors.deepPurple, decoration: TextDecoration.underline),
+                    color: Color(0xFF1E88E5),
+                    decoration: TextDecoration.underline),
                 children: [
                   TextSpan(
                     text: " - ${item['desc']}",
                     style: const TextStyle(
-                        color: Colors.black87, decoration: TextDecoration.none),
+                        color: Colors.black87,
+                        decoration: TextDecoration.none),
                   )
                 ],
               ),
@@ -65,7 +66,6 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // بيانات المنظمات
     final internationalOrgs = [
       {
         'name': 'British Dyslexia Association (BDA)',
@@ -113,7 +113,11 @@ class AboutScreen extends StatelessWidget {
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF5F2C82), Color(0xFF49A09D)],
+            colors: [
+              Color(0xFFE3F2FD),
+              Color(0xFFBBDEFB),
+              Color(0xFF90CAF9),
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -124,27 +128,41 @@ class AboutScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ===== Header =====
-                Text(
-                  "About LexiAid",
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    foreground: Paint()
-                      ..shader = const LinearGradient(
-                        colors: [Color(0xFF9370DB), Color(0xFFFF69B4)],
-                      ).createShader(const Rect.fromLTWH(0, 0, 200, 70)),
-                  ),
+                // Row للسهم + العنوان
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+                      onPressed: () {
+                        Navigator.pop(context); // ترجع للشاشة السابقة
+                      },
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      "About LexiAid",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        foreground: Paint()
+                          ..shader = const LinearGradient(
+                            colors: [
+                              Color(0xFF42A5F5),
+                              Color(0xFF1E88E5),
+                            ],
+                          ).createShader(const Rect.fromLTWH(0, 0, 200, 70)),
+                      ),
+                    ),
+                  ],
                 ),
+
                 const SizedBox(height: 12),
                 const Text(
                   "LexiAid is dedicated to helping individuals with dyslexia unlock their potential. "
                       "Our tools make learning easier, effective, and enjoyable.",
-                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
                 const SizedBox(height: 24),
 
-                // ===== Sections =====
                 sectionBlock(
                   "Our Mission",
                   const Text(

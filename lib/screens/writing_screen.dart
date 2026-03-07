@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'home_screen.dart'; // تأكدي المسار صح
 
 class WritingScreen extends StatefulWidget {
-  final String userName; // اسم المستخدم يأتي من الشاشة السابقة
+  final String userName;
   const WritingScreen({super.key, this.userName = "Friend"});
 
   @override
@@ -11,13 +14,23 @@ class WritingScreen extends StatefulWidget {
 
 class _WritingScreenState extends State<WritingScreen>
     with SingleTickerProviderStateMixin {
+
   final TextEditingController _controller = TextEditingController();
+  final TextEditingController _correctedController = TextEditingController();
+
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   final Random random = Random();
+
   bool isScanning = false;
   bool showAI = false;
+
   List<_Correction> corrections = [];
+
+  int apiWordCount = 0;
+  int apiCorrectWords = 0;
+  int apiToFix = 0;
+  double apiSimilarity = 0;
 
   @override
   void initState() {
@@ -26,54 +39,118 @@ class _WritingScreenState extends State<WritingScreen>
     AnimationController(vsync: this, duration: const Duration(seconds: 3))
       ..repeat(reverse: true);
 
-    // Tween لضمان ان الـ opacity دائما بين 0 و 1
-    _fadeAnimation = Tween<double>(begin: 0.3, end: 0.7)
-        .animate(_animationController);
+    _fadeAnimation =
+        Tween<double>(begin: 0.3, end: 0.7).animate(_animationController);
   }
 
   @override
   void dispose() {
     _animationController.dispose();
     _controller.dispose();
+    _correctedController.dispose();
     super.dispose();
   }
 
-  void simulateDetection() {
+  Future<void> fetchCorrection() async {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+
     setState(() {
       isScanning = true;
       showAI = true;
       corrections.clear();
+      _correctedController.clear();
     });
 
-    Future.delayed(const Duration(seconds: 2), () {
-      final text = _controller.text;
-      final List<_Correction> found = [];
-      if (text.contains('teh')) {
-        found.add(_Correction('teh', 'the'));
+    try {
+      final response = await http.post(
+        Uri.parse("http://192.168.183.157:3000/correct"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"text": text}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        final correctedText = data['correctedText'] ?? "";
+        final apiCorrections = data['corrections'] ?? [];
+
+        List<_Correction> found = [];
+        for (var item in apiCorrections) {
+          found.add(_Correction(item['text'], item['correction']));
+        }
+
+        setState(() {
+          corrections = found;
+          _correctedController.text = correctedText;
+
+          apiWordCount = data['word_count'] ?? 0;
+          apiCorrectWords = data['correct_words'] ?? 0;
+          apiToFix = data['to_fix'] ?? 0;
+          apiSimilarity = (data['similarity'] ?? 0).toDouble();
+        });
       }
-      if (text.contains('dont')) {
-        found.add(_Correction('dont', "don't"));
-      }
+    } catch (e) {
       setState(() {
-        corrections = found;
-        isScanning = false;
+        corrections = [_Correction("Error", "$e")];
       });
-    });
+    } finally {
+      setState(() => isScanning = false);
+    }
   }
 
-  int get wordCount => _controller.text.trim().isEmpty
-      ? 0
-      : _controller.text.trim().split(RegExp(r'\s+')).length;
+  Color getCorrectColor() {
+    if (apiSimilarity >= 80) return Colors.green.shade600;
+    if (apiSimilarity >= 50) return Colors.orange.shade700;
+    return Colors.red.shade600;
+  }
 
-  int get correctWords => max(0, wordCount - corrections.length);
+  Color getToFixColor() {
+    if (apiSimilarity <= 20) return Colors.green.shade600;
+    if (apiSimilarity <= 50) return Colors.orange.shade700;
+    return Colors.red.shade600;
+  }
+
+  List<TextSpan> buildHighlightedText() {
+    final words = _controller.text.trim().split(RegExp(r'\s+'));
+    return words.map((w) {
+      final correction = corrections.firstWhere(
+            (c) => c.text == w,
+        orElse: () => _Correction(w, w),
+      );
+      final isCorrected = correction.text != correction.correction;
+      return TextSpan(
+        text: '$w ',
+        style: TextStyle(
+          color: isCorrected ? Colors.red.shade700 : Colors.black87,
+          fontWeight: isCorrected ? FontWeight.bold : FontWeight.normal,
+        ),
+      );
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Stack(
         children: [
-          // Floating sparkles
+          // Background gradient
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFFE3F2FD),
+                  Color(0xFF52A9E8),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+
+          // Animated floating circles
           ...List.generate(6, (i) {
             final dx = random.nextDouble() * screenSize.width;
             final dy = random.nextDouble() * screenSize.height;
@@ -88,9 +165,9 @@ class _WritingScreenState extends State<WritingScreen>
                     child: Container(
                       width: 40,
                       height: 40,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white54,
+                        color: Colors.white.withOpacity(0.5),
                       ),
                     ),
                   ),
@@ -99,205 +176,195 @@ class _WritingScreenState extends State<WritingScreen>
             );
           }),
 
-          // Main content
+          // Main content scrollable
           SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 50),
-                // Header
+                const SizedBox(height: 40),
+
+                // Header مع السهم في اليسار والنص في الوسط
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
+                    // السهم للعودة
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) => const HomeScreen()),
+                          );
+                        },
+                      ),
                     ),
-                    const Text(
-                      'Writing Detective',
-                      style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+
+                    // Spacer لإبعاد النص عن السهم
+                    const SizedBox(width: 12),
+
+                    // النص في المنتصف
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          'Hi, ${widget.userName} 👋',
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF6B98E1),
+                          ),
+                        ),
+                      ),
                     ),
+
+                    // Spacer صغير على اليمين للتوازن
                     const SizedBox(width: 48),
                   ],
                 ),
+
                 const SizedBox(height: 20),
 
-                // Welcome message with user's name
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Hi, ${widget.userName} 👋',
-                    style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // AI Assistant Box
+                // باقي الصفحة: AI feedback + Writing box + Stats كما كانت
                 if (showAI)
                   Container(
                     padding: const EdgeInsets.all(16),
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.pink.withOpacity(0.3),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8))
-                        ]),
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.blue.shade100.withOpacity(0.5),
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        )
+                      ],
+                    ),
                     child: Row(
                       children: [
-                        const Text('🤖', style: TextStyle(fontSize: 32)),
+                        const Text('🤖', style: TextStyle(fontSize: 28)),
                         const SizedBox(width: 12),
                         Expanded(
+                          child: Text(
+                            isScanning
+                                ? 'Scanning your writing...'
+                                : apiToFix == 0
+                                ? 'Perfect! No errors found! 🌟'
+                                : 'Found $apiToFix suggestion(s)! 🎯',
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade300,
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      )
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: const TextStyle(fontSize: 16),
+                          children: buildHighlightedText(),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: _controller,
+                        maxLines: 6,
+                        decoration: const InputDecoration(
+                          hintText: "Start writing here...",
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (_) => setState(() {}),
+                      ),
+                      const SizedBox(height: 16),
+                      if (_correctedController.text.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade50,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Lexi is checking...',
+                                "Corrected Version ✨",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.pink),
+                                    color: Colors.green),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                isScanning
-                                    ? 'Scanning your writing for improvements! ✨'
-                                    : corrections.isEmpty
-                                    ? 'Perfect! No errors found! 🌟'
-                                    : 'Found ${corrections.length} suggestion${corrections.length != 1 ? 's' : ''}! 🎯',
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.grey),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: _correctedController,
+                                readOnly: true,
+                                maxLines: 4,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                ),
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-
-                // Writing Area
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.pink.withOpacity(0.3),
-                          blurRadius: 20,
-                          offset: const Offset(0, 8))
                     ],
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        TextField(
-                          controller: _controller,
-                          maxLines: 8,
-                          decoration: InputDecoration(
-                              hintText:
-                              "Start writing here... Try typing: 'teh cat dont like water'",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                borderSide:
-                                BorderSide(color: Colors.pink.shade200),
-                              ),
-                              filled: true,
-                              fillColor: Colors.white),
-                        ),
-                        if (corrections.isNotEmpty)
-                          Container(
-                            margin: const EdgeInsets.only(top: 12),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                                color: Colors.yellow[100],
-                                borderRadius: BorderRadius.circular(20),
-                                border:
-                                Border.all(color: Colors.yellow.shade700)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: corrections
-                                  .map((c) => Text('${c.text} → ${c.correction}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold)))
-                                  .toList(),
-                            ),
-                          ),
-                      ],
+                ),
+
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFACACF3),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
+                  onPressed: fetchCorrection,
+                  child: Text(isScanning ? "Scanning..." : "Check Writing"),
                 ),
+                const SizedBox(height: 20),
 
-                const SizedBox(height: 16),
-                // Action buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: _controller.text.trim().isEmpty || isScanning
-                            ? null
-                            : simulateDetection,
-                        icon: isScanning
-                            ? const CircularProgressIndicator(
-                            color: Colors.white, strokeWidth: 2)
-                            : const Icon(Icons.check_circle),
-                        label:
-                        Text(isScanning ? 'Scanning...' : 'Check Writing'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.greenAccent.shade400,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.camera_alt),
-                        label: const Text('Scan Paper'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.purpleAccent.shade100,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-                // Stats
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _StatItem(
-                        icon: '📝',
-                        label: 'Words',
-                        value: wordCount.toString(),
-                        color: Colors.pink),
+                      icon: '📝',
+                      label: 'Words',
+                      value: apiWordCount.toString(),
+                      color: Colors.purple.shade600,
+                    ),
                     _StatItem(
-                        icon: '✅',
-                        label: 'Correct',
-                        value: correctWords.toString(),
-                        color: Colors.green),
+                      icon: '✅',
+                      label: 'Correct',
+                      value:
+                      "$apiCorrectWords (${apiSimilarity.toStringAsFixed(0)}%)",
+                      color: getCorrectColor(),
+                    ),
                     _StatItem(
-                        icon: '⚡',
-                        label: 'To Fix',
-                        value: corrections.length.toString(),
-                        color: Colors.amber),
+                      icon: '⚡',
+                      label: 'To Fix',
+                      value:
+                      "$apiToFix (${(100 - apiSimilarity).toStringAsFixed(0)}%)",
+                      color: getToFixColor(),
+                    ),
                   ],
-                )
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -318,22 +385,30 @@ class _StatItem extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  const _StatItem(
-      {required this.icon,
-        required this.label,
-        required this.value,
-        required this.color});
+
+  const _StatItem({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(icon, style: const TextStyle(fontSize: 28)),
+        Text(icon, style: const TextStyle(fontSize: 26)),
         const SizedBox(height: 4),
-        Text(value,
-            style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, color: color)),
-        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+        Text(label,
+            style: const TextStyle(fontSize: 12, color: Colors.grey)),
       ],
     );
   }

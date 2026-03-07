@@ -11,7 +11,6 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
-  final TextEditingController _controller = TextEditingController();
   late AnimationController _animationController;
 
   @override
@@ -26,18 +25,15 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   @override
   void dispose() {
     _animationController.dispose();
-    _controller.dispose();
     super.dispose();
   }
 
   void handleStart() {
-    if (_controller.text.trim().isNotEmpty) {
-      Navigator.pushReplacementNamed(
-        context,
-        "/home",
-        arguments: _controller.text.trim(),
-      );
-    }
+    Navigator.pushReplacementNamed(
+      context,
+      "/home",
+      arguments: "Friend",
+    );
   }
 
   @override
@@ -50,9 +46,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFFE6E6FA),
-              Color(0xFFB0E0E6),
-              Color(0xFF98FB98),
+              Color(0xFFE3F2FD), // أزرق فاتح
+              Color(0xFFBBDEFB), // أزرق أفتح شوي
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -60,7 +55,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         ),
         child: Stack(
           children: [
-            // ⭐ Floating stars
+            // النجوم المتحركة
             ...List.generate(20, (index) {
               final random = Random();
               return Positioned(
@@ -70,8 +65,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   opacity: _animationController,
                   child: const Icon(
                     Icons.auto_awesome,
-                    color: Color(0xFFFF7F7F),
-                    size: 16,
+                    color: Color(0xFF2196F3), // أزرق متناسق مع الزرار
+                    size: 18,
                   ),
                 ),
               );
@@ -81,77 +76,54 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-
-                    // ✨ 3D Animated Carousel
                     const SizedBox(
-                      height: 400,
+                      height: 350,
                       child: Carousel3D(),
                     ),
 
                     const SizedBox(height: 20),
 
                     const Text(
-                      "Learn, try, and improve… your adventure starts now!✨",
+                      "Welcome! 🌈",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    const Text(
+                      "Your learning journey starts here!",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18,
-                        color: Color(0xFF6B5B95),
+                        color: Colors.black54,
                       ),
                     ),
 
                     const SizedBox(height: 40),
 
-                    TextField(
-                      controller: _controller,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 20),
-                      decoration: InputDecoration(
-                        hintText: "What's your name?",
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 18, horizontal: 20),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(50),
-                          borderSide: const BorderSide(
-                              color: Color(0xFFE6E6FA), width: 3),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    GestureDetector(
-                      onTap: handleStart,
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFFF7F7F),
-                              Color(0xFFFFB6C1),
-                            ],
+                    SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2196F3), // أزرق متناسق
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.red.withOpacity(0.4),
-                              blurRadius: 25,
-                              offset: const Offset(0, 10),
-                            )
-                          ],
+                          elevation: 8,
                         ),
-                        child: const Center(
-                          child: Text(
-                            "Start Learning! ✨",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                        onPressed: handleStart,
+                        child: const Text(
+                          "Start Learning",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -160,10 +132,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     const SizedBox(height: 40),
 
                     const Text(
-                      "Made with ❤️ for young learners",
+                      "Made with 💜 for learners",
                       style: TextStyle(
                         fontSize: 14,
-                        color: Color(0xFF6B5B95),
+                        color: Colors.black87,
                       ),
                     ),
                   ],
@@ -213,6 +185,7 @@ class _Carousel3DState extends State<Carousel3D> {
     super.initState();
 
     loopedImages = [...images, ...images];
+
     _controller = PageController(
       viewportFraction: 0.55,
       initialPage: images.length,
@@ -221,6 +194,7 @@ class _Carousel3DState extends State<Carousel3D> {
     _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
       if (_controller.hasClients) {
         int nextPage = _controller.page!.toInt() + 1;
+
         _controller.animateToPage(
           nextPage,
           duration: const Duration(milliseconds: 500),
@@ -247,6 +221,7 @@ class _Carousel3DState extends State<Carousel3D> {
           animation: _controller,
           builder: (context, child) {
             double value = 0.0;
+
             if (_controller.position.haveDimensions) {
               value = _controller.page! - index;
             }
@@ -263,14 +238,9 @@ class _Carousel3DState extends State<Carousel3D> {
                 scale: scale,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(25),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxHeight: 500,
-                    ),
-                    child: Image.asset(
-                      loopedImages[index],
-                      fit: BoxFit.contain,
-                    ),
+                  child: Image.asset(
+                    loopedImages[index],
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),

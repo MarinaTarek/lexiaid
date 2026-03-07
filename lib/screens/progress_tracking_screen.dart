@@ -46,22 +46,6 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
     {'day': 'Sun', 'score': 95},
   ];
 
-  final skills = const [
-    {'name': 'Spelling', 'level': 85, 'color': Color(0xFFFF7F7F)},
-    {'name': 'Grammar', 'level': 72, 'color': Color(0xFF87CEEB)},
-    {'name': 'Reading Speed', 'level': 90, 'color': Color(0xFF98FB98)},
-    {'name': 'Comprehension', 'level': 78, 'color': Color(0xFFDDA0DD)},
-  ];
-
-  final achievements = const [
-    {'title': 'First Steps', 'emoji': '🎯', 'earned': true},
-    {'title': 'Word Wizard', 'emoji': '📝', 'earned': true},
-    {'title': 'Reading Star', 'emoji': '⭐', 'earned': true},
-    {'title': 'Perfect Week', 'emoji': '🏆', 'earned': false},
-    {'title': 'Speed Reader', 'emoji': '⚡', 'earned': false},
-    {'title': 'Master Writer', 'emoji': '👑', 'earned': false},
-  ];
-
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -83,8 +67,9 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                     child: Text(
                       '✨',
                       style: TextStyle(
-                          fontSize: 20,
-                          color: i % 2 == 0 ? Colors.amber : Colors.pink),
+                        fontSize: 20,
+                        color: const Color(0xFF2196F3), // أزرق متناسق
+                      ),
                     ),
                   ),
                 );
@@ -96,7 +81,7 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF98FB98), Color(0xFF90EE90), Color(0xFFB0E0E6)],
+                colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -111,7 +96,8 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          icon: const Icon(Icons.arrow_back,
+                              color: Color(0xFF2196F3)),
                           onPressed: () => Navigator.pop(context),
                         ),
                         const Text(
@@ -119,7 +105,7 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                           style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                              color: Colors.black87),
                         ),
                         const SizedBox(width: 48),
                       ],
@@ -134,7 +120,7 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.green.withOpacity(0.4),
+                            color: Colors.blue.withOpacity(0.3),
                             blurRadius: 20,
                             offset: const Offset(0, 8),
                           ),
@@ -148,10 +134,10 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               gradient: const LinearGradient(
-                                  colors: [Colors.amber, Colors.orange]),
+                                  colors: [Color(0xFF64B5F6), Color(0xFF2196F3)]),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.amber.withOpacity(0.5),
+                                  color: Colors.blue.withOpacity(0.5),
                                   blurRadius: 15,
                                 ),
                               ],
@@ -173,15 +159,14 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 12),
-                          // Progress Bar
                           ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: LinearProgressIndicator(
                               value: 245 / 300,
                               minHeight: 12,
                               backgroundColor: Colors.grey[200],
-                              valueColor:
-                              const AlwaysStoppedAnimation<Color>(Colors.amber),
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Color(0xFF2196F3)),
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -202,17 +187,17 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                             icon: '🔥',
                             label: 'Day Streak',
                             value: '7',
-                            color: Color(0xFFFF7F7F)),
+                            color: Color(0xFF64B5F6)),
                         _StatItem(
                             icon: '📚',
                             label: 'Lessons Done',
                             value: '42',
-                            color: Color(0xFF87CEEB)),
+                            color: Color(0xFF2196F3)),
                         _StatItem(
                             icon: '⏱️',
                             label: 'Time Spent',
                             value: '18h',
-                            color: Color(0xFF98FB98)),
+                            color: Color(0xFF42A5F5)),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -225,7 +210,7 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.green.withOpacity(0.4),
+                            color: Colors.blue.withOpacity(0.3),
                             blurRadius: 20,
                             offset: const Offset(0, 8),
                           ),
@@ -236,7 +221,7 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                         children: [
                           Row(
                             children: const [
-                              Icon(Icons.trending_up, color: Color(0xFF98FB98)),
+                              Icon(Icons.trending_up, color: Color(0xFF2196F3)),
                               SizedBox(width: 8),
                               Text(
                                 "This Week's Performance",
@@ -263,7 +248,8 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                                         if (index < 0 || index >= weeklyData.length) {
                                           return const Text('');
                                         }
-                                        return Text(weeklyData[index]['day'] as String);
+                                        return Text(
+                                            weeklyData[index]['day'] as String);
                                       },
                                     ),
                                   ),
@@ -279,13 +265,13 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                                     ),
                                     isCurved: true,
                                     gradient: const LinearGradient(
-                                        colors: [Colors.greenAccent, Colors.green]),
+                                        colors: [Color(0xFF64B5F6), Color(0xFF2196F3)]),
                                     barWidth: 3,
                                     belowBarData: BarAreaData(
                                       show: true,
                                       gradient: LinearGradient(
                                         colors: [
-                                          Colors.green.withOpacity(0.3),
+                                          const Color(0xFF2196F3).withOpacity(0.3),
                                           Colors.transparent
                                         ],
                                         begin: Alignment.topCenter,
@@ -307,9 +293,7 @@ class _ProgressTrackingScreenState extends State<ProgressTrackingScreen>
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 24),
-                    // Skills and Achievements are same as before...
                   ],
                 ),
               ),
@@ -341,8 +325,8 @@ class _StatItem extends StatelessWidget {
         Text(icon, style: const TextStyle(fontSize: 28)),
         const SizedBox(height: 4),
         Text(value,
-            style:
-            TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color)),
+            style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: color)),
         Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
       ],
     );
